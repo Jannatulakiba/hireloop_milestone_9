@@ -10,3 +10,6 @@ export const authClient = createAuthClient({
 });
 
 export const { signIn, signUp, signOut, useSession } = authClient;
+
+// Auth role — sign-up, session ar sidebar ei same type use hobe.
+export type Role = "seeker" | "recruiter" | "admin";

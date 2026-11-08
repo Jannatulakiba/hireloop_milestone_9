@@ -21,10 +21,11 @@ import {
 import { cn } from "cn"
 
 
-const navLinks = [
+const getNavLinks = (role?: string) => [
   { label: "Browse Jobs", href: "/jobs" },
   { label: "Company", href: "/company" },
   { label: "Pricing", href: "/pricing" },
+  { label: "Dashboard", href: `/dashboard/${role || "seeker"}` },
 ]
 
 const mobileLinkClassName =
@@ -32,7 +33,8 @@ const mobileLinkClassName =
 
 function Navbar({ className }: { className?: string }) {
   const [open, setOpen] = useState(false)
- const { data: session } = authClient.useSession()
+  const { data: session } = authClient.useSession()
+  const navLinks = getNavLinks(session?.user?.role)
 
 const handleSignOut = async () => {
   

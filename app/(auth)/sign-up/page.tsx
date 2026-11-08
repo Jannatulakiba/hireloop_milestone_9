@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/auth/password-input";
-import { authClient } from "@/lib/auth-client";
+import { authClient, type Role } from "@/lib/auth-client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function SignUpPage() {
@@ -45,13 +45,13 @@ export default function SignUpPage() {
     }
 const { name, email, password, role } = formData;
 
+setError("");
 setLoading(true);
 const { data, error } = await authClient.signUp.email({
   name,
   email,
   password,
-  role,   // NEW
-  
+  role: role as Role,   // NEW
 });
 setLoading(false);
 
