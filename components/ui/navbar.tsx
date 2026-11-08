@@ -9,6 +9,7 @@ import ctaBg from "@app/images/cta-bg.png"
 import logo from "@app/images/logo.png"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { authClient, signOut } from "@/lib/auth-client"
 import {
   Sheet,
   SheetContent,
@@ -18,6 +19,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { cn } from "cn"
+
 
 const navLinks = [
   { label: "Browse Jobs", href: "/jobs" },
@@ -30,6 +32,14 @@ const mobileLinkClassName =
 
 function Navbar({ className }: { className?: string }) {
   const [open, setOpen] = useState(false)
+ const { data: session } = authClient.useSession()
+
+const handleSignOut = async () => {
+  
+    await signOut();
+    // Optionally, you can redirect the user to the home page or login page after signing out
+   
+  }
 
   return (
     <header
@@ -82,7 +92,21 @@ function Navbar({ className }: { className?: string }) {
             </Link>
           ))}
 
-          <Separator orientation="vertical" className="h-5 bg-white/15" />
+          {session?.user ? 
+          
+          <>  <span className="text-sm font-medium text-brand-light transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none">
+            
+              Welcome, {session.user.name}
+            </span>
+            <Button onClick={handleSignOut}
+            className="h-10 rounded-lg bg-brand px-5 text-sm font-medium text-brand-foreground hover:bg-brand/85"
+          >
+           Sign-out
+          </Button>
+          </>
+          : (
+            <>
+              <Separator orientation="vertical" className="h-5 bg-white/15" />
 
           <Link
             href="/sign-in"
@@ -98,6 +122,8 @@ function Navbar({ className }: { className?: string }) {
           >
             Get Started
           </Button>
+            </>
+          )}
         </nav>
 
         {/* Mobile navigation */}

@@ -10,17 +10,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/auth/password-input";
 import { authClient } from "@/lib/auth-client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function SignUpPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    terms: false,
-  });
+  name: "",
+  image: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  role: "seeker",   // NEW
+  terms: false,
+});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -41,17 +43,17 @@ export default function SignUpPage() {
       setError("Terms accept korte hobe");
       return;
     }
+const { name, email, password, role } = formData;
 
-    const { name, image, email, password } = formData;
-
-    setLoading(true);
-    const { data, error } = await authClient.signUp.email({
-      name,
-      email,
-      password
-     
-    });
-    setLoading(false);
+setLoading(true);
+const { data, error } = await authClient.signUp.email({
+  name,
+  email,
+  password,
+  role,   // NEW
+  
+});
+setLoading(false);
 
     if (error) {
       setError(error.message || "Sign up fail hoyeche");
@@ -67,7 +69,7 @@ export default function SignUpPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">Create account</CardTitle>
-          <CardDescription>Notun account khulun</CardDescription>
+          <CardDescription>Create a new account</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -95,6 +97,24 @@ export default function SignUpPage() {
                 required
               />
             </div>
+            <div className="space-y-2">
+  <Label htmlFor="role">Register as</Label>
+  <Select
+    value={formData.role}
+    onValueChange={(value) =>
+      setFormData((prev) => ({ ...prev, role: value ?? "seeker" }))
+    }
+  >
+    <SelectTrigger id="role" className="w-full">
+      <SelectValue placeholder="Select role" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="seeker">Job Seeker</SelectItem>
+      <SelectItem value="recruiter">Recruiter</SelectItem>
+      <SelectItem value="admin">Admin</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <PasswordInput
