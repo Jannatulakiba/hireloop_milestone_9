@@ -9,6 +9,7 @@ import {
   FileTextIcon,
   LayoutDashboardIcon,
   LogOutIcon,
+  PlusIcon,
   SearchIcon,
   SettingsIcon,
   UsersIcon,
@@ -71,6 +72,12 @@ const mainItemTypes: Record<Role, MainMenuItem[]> = {
       label: "Dashboard",
       href: "/dashboard/recruiter",
       icon: LayoutDashboardIcon,
+    },
+    {
+      id: "add-job",
+      label: "Add Job",
+      href: "/dashboard/recruiter/jobs/new",
+      icon: PlusIcon,
     },
      {
       id: "users",

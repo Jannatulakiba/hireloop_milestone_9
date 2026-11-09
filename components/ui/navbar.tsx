@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
 
 import ctaBg from "@app/images/cta-bg.png"
@@ -34,7 +35,13 @@ const mobileLinkClassName =
 function Navbar({ className }: { className?: string }) {
   const [open, setOpen] = useState(false)
   const { data: session } = authClient.useSession()
+  const pathname = usePathname()
   const navLinks = getNavLinks(session?.user?.role)
+
+  // The dashboard has its own shell (sidebar + header) — no marketing navbar there.
+  if (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) {
+    return null
+  }
 
 const handleSignOut = async () => {
   
