@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "cn";
+import { createJob, type JobInput } from "@/lib/actions/jobs";
 
 const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship"];
 
@@ -47,7 +48,7 @@ const selectClass =
   "h-11 w-full rounded-xl border border-[#232327] bg-[#1e1e21] dark:bg-[#1e1e21] px-3.5 text-sm text-white focus-visible:border-[#5c53fe] focus-visible:ring-[#5c53fe]/25 [&_svg]:text-[#a0a0ab]";
 
 export default function NewJobPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<JobInput>({
     title: "",
     company: "",
     category: "Engineering & Tech",
@@ -62,6 +63,8 @@ export default function NewJobPage() {
     qualifications: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -69,12 +72,27 @@ export default function NewJobPage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setSubmitted(false);
+    setError(null);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
-    setSubmitted(true);
+    setSubmitting(true);
+    setError(null);
+    setSubmitted(false);
+
+    try {
+      const result = await createJob(formData);
+      if (result.ok) {
+        setSubmitted(true);
+      } else {
+        setError(result.error ?? "Something went wrong while saving the job.");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to save the job.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -392,20 +410,28 @@ export default function NewJobPage() {
               </div>
             </div>
           </section>
-          <section className="rounded-2xl bg-[#151516] p-6"><div className="flex items-center gap-3">
+          <section className="rounded-2xl bg-[#151516] p-6">
+            <div className="flex flex-wrap items-center gap-3">
               {submitted && (
                 <span className="text-sm text-[#8f88ff]">
-                  Job saved — check the console.
+                  Job posted successfully.
+                </span>
+              )}
+              {error && (
+                <span className="text-sm text-red-400" role="alert">
+                  {error}
                 </span>
               )}
               <Button
                 type="submit"
-                className="h-11 rounded-xl bg-[#5c53fe] px-6 text-sm font-bold text-white hover:bg-[#4a42f0]"
+                disabled={submitting}
+                className="h-11 rounded-xl bg-[#5c53fe] px-6 text-sm font-bold text-white hover:bg-[#4a42f0] disabled:opacity-60"
               >
-                Publish Job
+                {submitting ? "Publishing…" : "Publish Job"}
                 <ArrowRight />
               </Button>
-            </div> </section>
+            </div>
+          </section>
         </form>
       </div>
     </div>

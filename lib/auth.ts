@@ -1,6 +1,5 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { APIError } from "better-auth/api";
 import { MongoClient } from "mongodb";
 
 const client = new MongoClient(process.env.MONGODB_URI!);
