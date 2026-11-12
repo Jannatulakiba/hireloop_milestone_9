@@ -14,7 +14,7 @@ export default function DashBoardlayout({
   return (
     <SidebarProvider>
       <DashboardSidebar />
-      <SidebarInset>
+      <SidebarInset className="min-w-0">
         <header className="flex h-16 shrink-0 items-center gap-2 border-b border-sidebar-border px-4">
           <SidebarTrigger />
         </header>
