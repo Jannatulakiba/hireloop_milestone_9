@@ -23,7 +23,7 @@ import { cn } from "cn"
 
 
 const getNavLinks = (role?: string) => [
-  { label: "Browse Jobs", href: "/jobs" },
+  { label: "Browse Jobs", href: "/browse-jobs" },
   { label: "Company", href: "/company" },
   { label: "Pricing", href: "/pricing" },
   { label: "Dashboard", href: `/dashboard/${role || "seeker"}` },

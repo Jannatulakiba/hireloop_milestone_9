@@ -68,15 +68,29 @@ const toJobRecord = (value: unknown): JobRecord => {
   return job
 }
 
-export const getJobs = async (): Promise<JobRecord[]> => {
-  const response = await fetch(`${BASE_URL}/jobs`)
+/**
+ * Fetch jobs, optionally filtered by a query string such as
+ * `jobType=part-time&search=nextjs`. Empty-string params are dropped and a
+ * param-less request stays `/jobs` (no dangling `?`).
+ */
+export const getJobs = async (query = ''): Promise<JobRecord[]> => {
+  const source = new URLSearchParams(query.startsWith('?') ? query.slice(1) : query)
+  const params = new URLSearchParams()
+  for (const [key, value] of source) {
+    const name = key.trim()
+    const term = value.trim()
+    if (name && term) params.append(name, term)
+  }
+  const search = params.toString()
+
+  const response = await fetch(`${BASE_URL}/jobs${search ? `?${search}` : ''}`)
   if (!response.ok) {
     throw new Error(`Unable to load jobs (HTTP ${response.status})`)
   }
 
   const data: unknown = await response.json()
   if (!Array.isArray(data)) {
-    throw new Error("Job API returned an invalid jobs list")
+    throw new Error('Job API returned an invalid jobs list')
   }
 
   return data.map(toJobRecord)
